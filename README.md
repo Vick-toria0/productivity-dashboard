@@ -8,72 +8,76 @@ A beautiful, functional browser dashboard that serves as the perfect "New Tab" p
 - Real-time clock updating every second
 - Smart greetings that change based on time of day
 - Current date display with full formatting
+- Personalized welcome message with user's name
 
-### 🌤️ Weather Widget
-- Fetches local weather using OpenWeatherMap API
-- Shows temperature and weather conditions
-- Loading states and error handling
-- Auto-refreshes every 10 minutes
+### 📊 Daily Progress Tracker
+- Color-coded status indicator (green/yellow/red)
+- Shows completion progress for today
+- 7-day history view with dots for each day
+- Tracks user engagement automatically
 
-### 🎯 Main Focus Tracker
-- Daily goal input with persistent storage
-- Interactive completion checkbox
-- Confetti celebration when goals are completed
-- Visual feedback with strikethrough effect
+### ✅ Multiple Tasks System
+- Add unlimited tasks with smart emoji detection
+- Individual checkboxes for each task
+- Delete tasks with the × button
+- Visual feedback with strikethrough for completed tasks
+- Smart emoji system based on task content (📚 study, 💼 work, 🏃 exercise, etc.)
+
+### � Daily Habits Tracker
+- Track water intake, exercise, and reading
+- Daily reset with date-based storage
+- Visual checkbox interface
+
+### ⏰ Focus Timer
+- 25-minute Pomodoro timer with visual progress ring
+- Start/Pause/Reset controls
+- Animated circular progress indicator
+- Confetti celebration on completion
+
+### 💭 Daily Motivation
+- Inspirational quotes that change daily
+- New quote each day
+- Curated motivational messages
+
+### 🔗 Quick Links
+- Fast access to frequently visited sites
+- GitHub, YouTube, Gmail, Calendar
+- Hover effects and smooth animations
+
+### 📝 Quick Notes
+- Auto-saves thoughts to localStorage
+- Clean textarea for jotting down ideas
+- Persists across browser sessions
+
+### 😊 Mood Tracker
+- 5 mood options from great to terrible
+- Daily mood tracking with usage statistics
+- Vertical layout with frequency counters
+- Tracks mood patterns over time
 
 ### 💾 Local Storage Persistence
-- Saves your name and daily focus
-- Remembers completion status
-- Persists across browser sessions
+- Saves all data locally in browser
+- Tasks, habits, mood, notes, and progress
+- Remembers user preferences across sessions
+- No data sent to external servers
 
 ### 🎨 Beautiful Design
 - Modern glassmorphism effects
 - Responsive bento-box grid layout
 - Smooth hover animations
 - Mobile-friendly responsive design
+- Professional color scheme
 
 ## Quick Start
 
 1. **Clone or download the files**
-2. **Get your OpenWeatherMap API key**:
-   - Sign up at [OpenWeatherMap](https://openweathermap.org/api)
-   - Get your free API key
-   - Replace `YOUR_OPENWEATHERMAP_API_KEY` in `script.js` with your key
-3. **Open `index.html` in your browser**
-4. **Set as your new tab page** in your browser settings
+2. **Open `index.html` in your browser**
+3. **Set as your new tab page** in your browser settings
 
-## Setup Instructions
+## Live Demo
 
-### Weather API Setup
-1. Visit [OpenWeatherMap](https://openweathermap.org/api)
-2. Create a free account
-3. Navigate to the API keys section
-4. Copy your API key
-5. Open `script.js` and replace `YOUR_OPENWEATHERMAP_API_KEY` with your actual key
-
-### Browser Integration
-- **Chrome**: Go to Settings > On startup > Add a new page > Select index.html
-- **Firefox**: Go to Options > Home > New Windows and Tabs > Custom URLs > Select index.html
-
-## Customization
-
-### Personal Name
-Click on the welcome message to set your name. It will be saved and displayed on future visits.
-
-### Background Images
-To enable dynamic Unsplash backgrounds, uncomment this line in `script.js`:
-```javascript
-setUnsplashBackground();
-```
-
-### Adding New Widgets
-The grid layout is easily extensible. Add new widgets by creating a div with the `widget` class:
-```html
-<div class="widget">
-    <h2>Your Widget Title</h2>
-    <!-- Widget content here -->
-</div>
-```
+Access your productivity dashboard at:
+https://vick-toria0.github.io/productivity-dashboard
 
 ## File Structure
 ```
@@ -87,7 +91,6 @@ The grid layout is easily extensible. Add new widgets by creating a div with the
 - **HTML5** - Semantic markup
 - **CSS3** - Modern styling with Grid, Flexbox, and animations
 - **Vanilla JavaScript** - No frameworks required
-- **OpenWeatherMap API** - Weather data
 - **Canvas Confetti** - Celebration effects
 - **Google Fonts (Inter)** - Typography
 
@@ -99,8 +102,8 @@ The grid layout is easily extensible. Add new widgets by creating a div with the
 
 ## Privacy
 This dashboard is completely client-side. No data is sent to external servers except for:
-- Weather data (with your permission)
-- Optional background images from Unsplash
+- Google Fonts (for typography)
+- Canvas Confetti CDN (for celebrations)
 
 All personal data is stored locally in your browser using localStorage.
 
