@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-image: url('https://images.unsplash.com/photo-1557683316-973690f-a455-1c3716-8da2aae8265?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: -1;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            grid-auto-rows: minmax(200px, auto);
+        }
+
+        .widget {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .widget:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .widget h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .widget h3 {
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* Header Widget */
+        .header-widget {
+            grid-column: span 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 150px;
+        }
+
+        .greeting h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .greeting p {
+            font-size: 1.1rem;
+            color: #718096;
+        }
+
+        .clock {
+            text-align: right;
+        }
+
+        #time {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #4a5568;
+            font-variant-numeric: tabular-nums;
+        }
+
+        #date {
+            font-size: 1rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        /* Task Tracker Widget */
+        .task-tracker-widget {
+            grid-column: span 2;
+        }
+
+        .current-day-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .status-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .status-circle.green {
+            background-color: #48bb78;
+            box-shadow: 0 0 20px rgba(72, 187, 120, 0.4);
+        }
+
+        .status-circle.yellow {
+            background-color: #ed8936;
+            box-shadow: 0 0 20px rgba(237, 137, 54, 0.4);
+        }
+
+        .status-circle.red {
+            background-color: #f56565;
+            box-shadow: 0 0 20px rgba(245, 101, 101, 0.4);
+        }
+
+        .week-progress {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .day-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .day-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .day-dot.green {
+            background-color: #48bb78;
+        }
+
+        .day-dot.yellow {
+            background-color: #ed8936;
+        }
+
+        .day-dot.red {
+            background-color: #f56565;
+        }
+
+        .day-label {
+            font-size: 0.7rem;
+            color: #718096;
+            text-align: center;
+        }
+
+        /* Tasks Widget */
+        .focus-widget {
+            grid-column: span 2;
+        }
+
+        .task-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #new-task {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        #new-task:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        #add-task-btn {
+            padding: 12px 20px;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #add-task-btn:hover {
+            background-color: #5a67d8;
+        }
+
+        #tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background-color: #f7fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .task-item:hover {
+            background-color: #edf2f7;
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+        }
+
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cbd5e0;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .task-checkbox.checked {
+            background-color: #48bb78;
+            border-color: #48bb78;
+        }
+
+        .task-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .task-emoji {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+
+        .task-text {
+            flex: 1;
+            color: #2d3748;
+            font-size: 1rem;
+        }
+
+        .task-delete {
+            background: none;
+            border: none;
+            color: #e53e3e;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .task-delete:hover {
+            background-color: #fed7d7;
+        }
+
+        /* Small Widgets */
+        .small-widget {
+            grid-column: span 1;
+            min-height: 200px;
+        }
+
+        /* Timer Widget */
+        .timer-container {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .timer-progress-ring {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-svg {
+            transform: rotate(-90deg);
+        }
+
+        .timer-background {
+            fill: none;
+            stroke: #e2e8f0;
+            stroke-width: 8;
+        }
+
+        .timer-progress {
+            fill: none;
+            stroke: #667eea;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 339.292;
+            stroke-dashoffset: 339.292;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .timer-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .timer-controls button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #timer-start {
+            background-color: #48bb78;
+            color: white;
+        }
+
+        #timer-start:hover {
+            background-color: #38a169;
+        }
+
+        #timer-reset {
+            background-color: #e53e3e;
+            color: white;
+        }
+
+        #timer-reset:hover {
+            background-color: #c53030;
+        }
+
+        /* Habits Widget */
+        .habit-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .habit-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
+        .habit-item label {
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        /* Mood Tracker Widget */
+        .mood-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .mood-emojis-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .mood-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background-color: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mood-item:hover {
+            background-color: #edf2f7;
+            transform: translateX(5px);
+        }
+
+        .mood-item.selected {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+
+        .mood-item.selected .mood-emoji {
+            transform: scale(1.1);
+        }
+
+        .mood-emoji {
+            font-size: 1.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        .mood-count {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a5568;
+            background-color: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 12px;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .mood-item.selected .mood-count {
+            background-color: white;
+            color: #667eea;
+        }
+
+        /* Notes Widget */
+        #quick-notes {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #quick-notes:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Links Widget */
+        .links-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .quick-link {
+            display: block;
+            padding: 8px 12px;
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #4a5568;
+            font-size: 0.85rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .quick-link:hover {
+            background-color: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Motivation Widget */
+        #motivation-text {
+            font-style: italic;
+            color: #4a5568;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            text-align: center;
+            font-weight: 500;
+            padding: 10px;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            color: #718096;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .header-widget,
+            .focus-widget {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .widget {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Controls -->
+        <div class="widget background-controls" style="position: fixed; top: 20px; right: 20px; z-index: 1000; padding: 15px; background: rgba(255,255,255,0.9); border-radius: 10px; backdrop-filter: blur(10px);">
+            <h4 style="margin-bottom: 10px; color: #2d3748;">🎨 Background</h4>
+            <select id="bg-select" style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #e2e8f0;">
+                <option value="gradient1">Blue Gradient</option>
+                <option value="gradient2">Sunset</option>
+                <option value="gradient3">Ocean</option>
+                <option value="gradient4">Forest</option>
+                <option value="image1">Mountain</option>
+                <option value="image2">City</option>
+                <option value="image3">Beach</option>
+            </select>
+        </div>
+
+    <div class="dashboard">
+        <!-- Header Widget -->
+        <div class="widget header-widget">
+            <div class="greeting">
+                <h1 id="greeting-text">Good Morning</h1>
+                <p id="user-name">Welcome back!</p>
+            </div>
+            <div class="clock">
+                <div id="time">00:00:00</div>
+                <div id="date">Monday, January 1, 2024</div>
+            </div>
+        </div>
+
+        <!-- Task Tracker Widget -->
+        <div class="widget task-tracker-widget">
+            <h2>Daily Progress</h2>
+            <div id="task-tracker-content">
+                <div class="current-day-status">
+                    <div class="status-circle" id="today-status"></div>
+                    <span id="status-text">No tasks yet</span>
+                </div>
+                <div class="week-progress" id="week-progress">
+                    <!-- Week days will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Widget -->
+        <div class="widget focus-widget">
+            <h2>Today's Tasks</h2>
+            <div class="task-input-group">
+                <input type="text" id="new-task" placeholder="Add a new task...">
+                <button id="add-task-btn">Add</button>
+            </div>
+            <div id="tasks-list">
+                <!-- Tasks will be added here dynamically -->
+            </div>
+        </div>
+
+        <!-- Timer Widget -->
+        <div class="widget small-widget timer-widget">
+            <h3>⏰ Focus Timer</h3>
+            <div class="timer-container">
+                <div class="timer-progress-ring">
+                    <svg class="timer-svg" width="120" height="120">
+                        <circle class="timer-background" cx="60" cy="60" r="54"></circle>
+                        <circle class="timer-progress" cx="60" cy="60" r="54"></circle>
+                    </svg>
+                    <div class="timer-display" id="timer-display">25:00</div>
+                </div>
+            </div>
+            <div class="timer-controls">
+                <button id="timer-start">Start</button>
+                <button id="timer-reset">Reset</button>
+            </div>
+        </div>
+
+        <!-- Habits Widget -->
+        <div class="widget small-widget habits-widget">
+            <h3>📈 Daily Habits</h3>
+            <div id="habits-list">
+                <div class="habit-item">
+                    <input type="checkbox" id="habit-water">
+                    <label for="habit-water">💧 Drink Water</label>
+                </div>
+                <div class="habit-item">
+                    <input type="checkbox" id="habit-exercise">
+                    <label for="habit-exercise">🏃 Exercise</label>
+                </div>
+                <div class="habit-item">
+                    <input type="checkbox" id="habit-read">
+                    <label for="habit-read">📚 Read</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Motivation Widget -->
+        <div class="widget small-widget motivation-widget">
+            <h3>💭 Daily Quote</h3>
+            <p id="motivation-text">Loading inspiration...</p>
+        </div>
+
+        <!-- Links Widget -->
+        <div class="widget small-widget links-widget">
+            <h3>🔗 Quick Links</h3>
+            <div class="links-grid">
+                <a href="https://github.com" target="_blank" class="quick-link">GitHub</a>
+                <a href="https://youtube.com" target="_blank" class="quick-link">YouTube</a>
+                <a href="https://gmail.com" target="_blank" class="quick-link">Gmail</a>
+                <a href="https://calendar.google.com" target="_blank" class="quick-link">Calendar</a>
+            </div>
+        </div>
+
+        <!-- Notes Widget -->
+        <div class="widget small-widget notes-widget">
+            <h3>📝 Quick Notes</h3>
+            <textarea id="quick-notes" placeholder="Jot down quick thoughts..."></textarea>
+        </div>
+
+        <!-- Mood Tracker Widget -->
+        <div class="widget small-widget mood-widget">
+            <h3>😊 Today's Mood</h3>
+            <div class="mood-container">
+                <div class="mood-emojis-vertical">
+                    <div class="mood-item" data-mood="great">
+                        <span class="mood-emoji">😄</span>
+                        <span class="mood-count">0</span>
+                    </div>
+                    <div class="mood-item" data-mood="good">
+                        <span class="mood-emoji">🙂</span>
+                        <span class="mood-count">0</span>
+                    </div>
+                    <div class="mood-item" data-mood="okay">
+                        <span class="mood-emoji">😐</span>
+                        <span class="mood-count">0</span>
+                    </div>
+                    <div class="mood-item" data-mood="bad">
+                        <span class="mood-emoji">😔</span>
+                        <span class="mood-count">0</span>
+                    </div>
+                    <div class="mood-item" data-mood="terrible">
+                        <span class="mood-emoji">😢</span>
+                        <span class="mood-count">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Task Manager Class
+        class TaskManager {
+            constructor() {
+                this.tasks = [];
+                this.dailyHistory = this.loadDailyHistory();
+                this.today = this.getTodayString();
+                this.initializeToday();
+            }
+
+            getTodayString() {
+                return new Date().toISOString().split('T')[0];
+            }
+
+            loadDailyHistory() {
+                const saved = localStorage.getItem('dailyHistory');
+                return saved ? JSON.parse(saved) : {};
+            }
+
+            saveDailyHistory() {
+                localStorage.setItem('dailyHistory', JSON.stringify(this.dailyHistory));
+            }
+
+            initializeToday() {
+                if (!this.dailyHistory[this.today]) {
+                    this.dailyHistory[this.today] = {
+                        tasks: [],
+                        completed: [],
+                        lastEngaged: new Date().toISOString(),
+                        weekCompleted: false
+                    };
+                    this.saveDailyHistory();
+                }
+                
+                // Check if we need to reset weekly completion status
+                this.checkWeeklyReset();
+                this.tasks = this.dailyHistory[this.today].tasks || [];
+            }
+
+            checkWeeklyReset() {
+                const today = new Date();
+                const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+                
+                // If it's Monday (day 1), reset all weekCompleted flags from previous week
+                if (dayOfWeek === 1) {
+                    Object.keys(this.dailyHistory).forEach(date => {
+                        if (this.dailyHistory[date].weekCompleted) {
+                            this.dailyHistory[date].weekCompleted = false;
+                        }
+                    });
+                    this.saveDailyHistory();
+                }
+            }
+
+            addTask(text) {
+                const task = {
+                    id: Date.now(),
+                    text: text,
+                    completed: false,
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.tasks.push(task);
+                this.dailyHistory[this.today].tasks = this.tasks;
+                this.dailyHistory[this.today].lastEngaged = new Date().toISOString();
+                this.saveDailyHistory();
+                
+                return task;
+            }
+
+            toggleTask(taskId) {
+                const task = this.tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.completed = !task.completed;
+                    this.dailyHistory[this.today].tasks = this.tasks;
+                    
+                    if (task.completed) {
+                        if (!this.dailyHistory[this.today].completed.includes(taskId)) {
+                            this.dailyHistory[this.today].completed.push(taskId);
+                        }
+                        // Mark this day as completed for the week
+                        this.dailyHistory[this.today].weekCompleted = true;
+                        this.triggerConfetti();
+                    } else {
+                        this.dailyHistory[this.today].completed = this.dailyHistory[this.today].completed.filter(id => id !== taskId);
+                        // Only unmark if no tasks are completed
+                        if (this.dailyHistory[this.today].completed.length === 0) {
+                            this.dailyHistory[this.today].weekCompleted = false;
+                        }
+                    }
+                    
+                    this.dailyHistory[this.today].lastEngaged = new Date().toISOString();
+                    this.saveDailyHistory();
+                }
+            }
+
+            deleteTask(taskId) {
+                this.tasks = this.tasks.filter(t => t.id !== taskId);
+                this.dailyHistory[this.today].tasks = this.tasks;
+                this.dailyHistory[this.today].completed = this.dailyHistory[this.today].completed.filter(id => id !== taskId);
+                this.dailyHistory[this.today].lastEngaged = new Date().toISOString();
+                this.saveDailyHistory();
+            }
+
+            getDayStatus(dateString) {
+                const dayData = this.dailyHistory[dateString];
+                if (!dayData || !dayData.tasks || dayData.tasks.length === 0) {
+                    return 'none';
+                }
+                
+                // If weekCompleted is true, return green regardless of current task completion
+                if (dayData.weekCompleted) {
+                    return 'green';
+                }
+                
+                const totalTasks = dayData.tasks.length;
+                const completedTasks = dayData.completed.length;
+                
+                if (completedTasks === totalTasks) {
+                    return 'green';
+                } else if (completedTasks > 0) {
+                    return 'yellow';
+                } else {
+                    return 'red';
+                }
+            }
+
+            getTodayStatus() {
+                return this.getDayStatus(this.today);
+            }
+
+            getLast7Days() {
+                const days = [];
+                const today = new Date();
+                
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() - i);
+                    const dateString = date.toISOString().split('T')[0];
+                    const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                    
+                    days.push({
+                        date: dateString,
+                        name: dayName,
+                        status: this.getDayStatus(dateString),
+                        isToday: dateString === this.today
+                    });
+                }
+                
+                return days;
+            }
+
+            triggerConfetti() {
+                // Simple confetti effect
+                const colors = ['#667eea', '#764ba2', '#48bb78', '#38a169'];
+                const confettiCount = 100;
+                
+                for (let i = 0; i < confettiCount; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.style.cssText = `
+                        position: fixed;
+                        width: 10px;
+                        height: 10px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        left: ${Math.random() * 100}%;
+                        top: ${Math.random() * 100}%;
+                        border-radius: 50%;
+                        pointer-events: none;
+                        z-index: 9999;
+                        animation: confetti-fall 3s linear forwards;
+                    `;
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }
+            }
+        }
+
+        // Small Widgets Class
+        class SmallWidgets {
+            constructor() {
+                this.timerInterval = null;
+                this.timerSeconds = 25 * 60;
+                this.isTimerRunning = false;
+                this.initializeWidgets();
+            }
+
+            initializeWidgets() {
+                this.initializeHabits();
+                this.initializeMotivation();
+                this.initializeTimer();
+                this.initializeMoodTracker();
+            }
+
+            initializeHabits() {
+                const today = new Date().toISOString().split('T')[0];
+                const savedHabits = localStorage.getItem(`habits_${today}`);
+                
+                if (savedHabits) {
+                    const habits = JSON.parse(savedHabits);
+                    habits.forEach(habitId => {
+                        const checkbox = document.getElementById(habitId);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                }
+
+                document.querySelectorAll('.habit-item input').forEach(checkbox => {
+                    checkbox.addEventListener('change', () => this.saveHabits());
+                });
+            }
+
+            saveHabits() {
+                const today = new Date().toISOString().split('T')[0];
+                const checkedHabits = [];
+                
+                document.querySelectorAll('.habit-item input:checked').forEach(checkbox => {
+                    checkedHabits.push(checkbox.id);
+                });
+                
+                localStorage.setItem(`habits_${today}`, JSON.stringify(checkedHabits));
+            }
+
+            initializeMotivation() {
+                const quotes = [
+                    "The secret of getting ahead is getting started.",
+                    "Don't watch the clock; do what it does. Keep going.",
+                    "Success is not final, failure is not fatal: it is courage to continue that counts.",
+                    "Believe you can and you're halfway there.",
+                    "The only way to do great work is to love what you do.",
+                    "Your limitation—it's only your imagination.",
+                    "Great things never come from comfort zones.",
+                    "Dream it. Wish it. Do it.",
+                    "Success doesn't just find you. You have to go out and get it.",
+                    "The harder you work for something, the greater you'll feel when you achieve it."
+                ];
+
+                const today = new Date().toDateString();
+                const savedQuote = localStorage.getItem('dailyQuote');
+                const savedDate = localStorage.getItem('quoteDate');
+                
+                if (savedDate === today && savedQuote) {
+                    document.getElementById('motivation-text').textContent = savedQuote;
+                } else {
+                    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+                    document.getElementById('motivation-text').textContent = randomQuote;
+                    localStorage.setItem('dailyQuote', randomQuote);
+                    localStorage.setItem('quoteDate', today);
+                }
+            }
+
+            initializeTimer() {
+                const startBtn = document.getElementById('timer-start');
+                const resetBtn = document.getElementById('timer-reset');
+                
+                startBtn.addEventListener('click', () => this.toggleTimer());
+                resetBtn.addEventListener('click', () => this.resetTimer());
+                
+                this.updateTimerDisplay();
+                this.updateProgressRing();
+            }
+
+            toggleTimer() {
+                const startBtn = document.getElementById('timer-start');
+                
+                if (this.isTimerRunning) {
+                    this.pauseTimer();
+                    startBtn.textContent = 'Start';
+                    startBtn.style.backgroundColor = '#48bb78';
+                } else {
+                    this.startTimer();
+                    startBtn.textContent = 'Pause';
+                    startBtn.style.backgroundColor = '#ed8936';
+                }
+            }
+
+            startTimer() {
+                this.isTimerRunning = true;
+                this.timerInterval = setInterval(() => {
+                    if (this.timerSeconds > 0) {
+                        this.timerSeconds--;
+                        this.updateTimerDisplay();
+                        this.updateProgressRing();
+                    } else {
+                        this.completeTimer();
+                    }
+                }, 1000);
+            }
+
+            pauseTimer() {
+                this.isTimerRunning = false;
+                clearInterval(this.timerInterval);
+            }
+
+            resetTimer() {
+                this.pauseTimer();
+                this.timerSeconds = 25 * 60;
+                this.updateTimerDisplay();
+                this.updateProgressRing();
+                
+                const startBtn = document.getElementById('timer-start');
+                startBtn.textContent = 'Start';
+                startBtn.style.backgroundColor = '#48bb78';
+            }
+
+            completeTimer() {
+                this.pauseTimer();
+                this.triggerConfetti();
+                alert('Timer completed! Take a break!');
+                this.resetTimer();
+            }
+
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.timerSeconds / 60);
+                const seconds = this.timerSeconds % 60;
+                document.getElementById('timer-display').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            updateProgressRing() {
+                const progressCircle = document.querySelector('.timer-progress');
+                const totalSeconds = 25 * 60;
+                const progress = this.timerSeconds / totalSeconds;
+                const circumference = 2 * Math.PI * 54;
+                const offset = circumference * (1 - progress);
+                
+                progressCircle.style.strokeDashoffset = offset;
+            }
+
+            initializeMoodTracker() {
+                const today = new Date().toISOString().split('T')[0];
+                const savedMood = localStorage.getItem(`mood_${today}`);
+                const moodStats = this.getMoodStats();
+                
+                this.updateMoodCounts(moodStats);
+                
+                if (savedMood) {
+                    const moodItem = document.querySelector(`[data-mood="${savedMood}"]`);
+                    if (moodItem) moodItem.classList.add('selected');
+                }
+
+                document.querySelectorAll('.mood-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const mood = item.getAttribute('data-mood');
+                        this.selectMood(mood, item);
+                    });
+                });
+            }
+
+            getMoodStats() {
+                const saved = localStorage.getItem('moodStats');
+                return saved ? JSON.parse(saved) : {
+                    great: 0, good: 0, okay: 0, bad: 0, terrible: 0
+                };
+            }
+
+            saveMoodStats(moodStats) {
+                localStorage.setItem('moodStats', JSON.stringify(moodStats));
+            }
+
+            updateMoodCounts(moodStats) {
+                Object.keys(moodStats).forEach(mood => {
+                    const countElement = document.querySelector(`[data-mood="${mood}"] .mood-count`);
+                    if (countElement) {
+                        countElement.textContent = moodStats[mood];
+                    }
+                });
+            }
+
+            selectMood(mood, item) {
+                const today = new Date().toISOString().split('T')[0];
+                const previousMood = localStorage.getItem(`mood_${today}`);
+                
+                document.querySelectorAll('.mood-item').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                localStorage.setItem(`mood_${today}`, mood);
+                
+                const moodStats = this.getMoodStats();
+                
+                if (previousMood && previousMood !== mood) {
+                    moodStats[previousMood]--;
+                    if (moodStats[previousMood] < 0) moodStats[previousMood] = 0;
+                }
+                
+                if (!previousMood || previousMood !== mood) {
+                    moodStats[mood]++;
+                }
+                
+                this.saveMoodStats(moodStats);
+                this.updateMoodCounts(moodStats);
+            }
+        }
+
+        // Initialize everything
+        let taskManager;
+        let smallWidgets;
+
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
+            
+            let greeting;
+            if (hours < 12) {
+                greeting = "Good Morning";
+            } else if (hours < 17) {
+                greeting = "Good Afternoon";
+            } else {
+                greeting = "Good Evening";
+            }
+            
+            document.getElementById('greeting-text').textContent = greeting;
+        }
+
+        function renderTasks() {
+            const tasksList = document.getElementById('tasks-list');
+            
+            if (taskManager.tasks.length === 0) {
+                tasksList.innerHTML = '<div class="empty-state">No tasks yet. Add your first task above!</div>';
+                return;
+            }
+            
+            tasksList.innerHTML = taskManager.tasks.map(task => {
+                const emoji = getTaskEmoji(task.text);
+                return `
+                <div class="task-item ${task.completed ? 'completed' : ''}">
+                    <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="taskManager.toggleTask(${task.id})"></div>
+                    <span class="task-emoji">${emoji}</span>
+                    <span class="task-text">${task.text}</span>
+                    <button class="task-delete" onclick="taskManager.deleteTask(${task.id})">×</button>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function getTaskEmoji(taskText) {
+            const text = taskText.toLowerCase();
+            
+            if (text.includes('study') || text.includes('learn') || text.includes('read') || text.includes('course') || text.includes('book')) {
+                return '📚';
+            }
+            if (text.includes('work') || text.includes('meeting') || text.includes('email') || text.includes('project') || text.includes('deadline')) {
+                return '💼';
+            }
+            if (text.includes('exercise') || text.includes('gym') || text.includes('workout') || text.includes('run') || text.includes('health')) {
+                return '🏃';
+            }
+            if (text.includes('buy') || text.includes('shop') || text.includes('store') || text.includes('grocery')) {
+                return '🛒';
+            }
+            if (text.includes('clean') || text.includes('home') || text.includes('house') || text.includes('room')) {
+                return '🏠';
+            }
+            if (text.includes('cook') || text.includes('food') || text.includes('meal') || text.includes('dinner') || text.includes('lunch')) {
+                return '🍳';
+            }
+            if (text.includes('call') || text.includes('phone') || text.includes('text') || text.includes('message')) {
+                return '📞';
+            }
+            if (text.includes('draw') || text.includes('paint') || text.includes('write') || text.includes('create') || text.includes('music')) {
+                return '🎨';
+            }
+            if (text.includes('relax') || text.includes('rest') || text.includes('break') || text.includes('meditate')) {
+                return '😌';
+            }
+            
+            return '📋';
+        }
+
+        function updateTaskTrackerDisplay() {
+            const todayStatus = taskManager.getTodayStatus();
+            const statusCircle = document.getElementById('today-status');
+            const statusText = document.getElementById('status-text');
+            const weekProgress = document.getElementById('week-progress');
+            
+            statusCircle.className = 'status-circle';
+            if (todayStatus !== 'none') {
+                statusCircle.classList.add(todayStatus);
+            }
+            
+            const todayData = taskManager.dailyHistory[taskManager.today];
+            const totalTasks = todayData ? todayData.tasks.length : 0;
+            const completedTasks = todayData ? todayData.completed.length : 0;
+            
+            if (totalTasks === 0) {
+                statusText.textContent = 'No tasks yet';
+            } else if (completedTasks === totalTasks) {
+                statusText.textContent = `All ${totalTasks} tasks completed!`;
+            } else {
+                statusText.textContent = `${completedTasks} of ${totalTasks} completed`;
+            }
+            
+            const last7Days = taskManager.getLast7Days();
+            weekProgress.innerHTML = last7Days.map(day => `
+                <div class="day-indicator">
+                    <div class="day-dot ${day.status}" title="${day.date}"></div>
+                    <div class="day-label">${day.isToday ? 'Today' : day.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function addNameCustomization() {
+            const userNameElement = document.getElementById('user-name');
+            
+            const savedName = localStorage.getItem('userName');
+            if (savedName && savedName.trim()) {
+                userNameElement.textContent = `Welcome back, ${savedName.trim()}!`;
+            }
+            
+            userNameElement.style.cursor = 'pointer';
+            userNameElement.title = 'Click to edit your name';
+            
+            userNameElement.addEventListener('click', function() {
+                const currentName = localStorage.getItem('userName') || '';
+                const newName = prompt('Enter your name:', currentName);
+                
+                if (newName && newName.trim()) {
+                    localStorage.setItem('userName', newName.trim());
+                    userNameElement.textContent = `Welcome back, ${newName.trim()}!`;
+                }
+            });
+        }
+
+        // Background Manager
+        const backgrounds = {
+            gradient1: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            gradient2: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            gradient3: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+            gradient4: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+            image1: 'url(https://images.unsplash.com/photo-1557683316-973690f-a455-1c3716-8da2aae8265?auto=format&fit=crop&w=1920&q=80)',
+            image2: 'url(https://images.unsplash.com/photo-1513475382598-7a3e5caac470?auto=format&fit=crop&w=1920&q=80)',
+            image3: 'url(https://images.unsplash.com/photo-1507525428034-b724cfce737f?auto=format&fit=crop&w=1920&q=80)'
+        };
+
+        function initializeBackground() {
+            const savedBg = localStorage.getItem('selectedBackground') || 'gradient1';
+            const bgSelect = document.getElementById('bg-select');
+            
+            bgSelect.value = savedBg;
+            setBackground(savedBg);
+            
+            bgSelect.addEventListener('change', (e) => {
+                const selectedBg = e.target.value;
+                setBackground(selectedBg);
+                localStorage.setItem('selectedBackground', selectedBg);
+            });
+        }
+
+        function setBackground(bgType) {
+            const body = document.body;
+            body.style.background = backgrounds[bgType];
+            body.style.backgroundSize = bgType.startsWith('gradient') ? 'auto' : 'cover';
+            body.style.backgroundPosition = 'center';
+            body.style.backgroundAttachment = 'fixed';
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize background
+            initializeBackground();
+            
+            // Start the clock
+            updateClock();
+            setInterval(updateClock, 1000);
+            
+            // Initialize task tracker
+            taskManager = new TaskManager();
+            updateTaskTrackerDisplay();
+            renderTasks();
+            
+            // Set up event listeners
+            document.getElementById('add-task-btn').addEventListener('click', addNewTask);
+            
+            // Initialize small widgets
+            smallWidgets = new SmallWidgets();
+            
+            // Add name customization
+            addNameCustomization();
+        });
+
+        function addNewTask() {
+            const input = document.getElementById('new-task');
+            const taskText = input.value.trim();
+            
+            if (taskText) {
+                taskManager.addTask(taskText);
+                input.value = '';
+                renderTasks();
+                updateTaskTrackerDisplay();
+            }
+        }
+    </script>
+</body>
+</html>

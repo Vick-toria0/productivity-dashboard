@@ -145,6 +145,10 @@ class TaskManager {
         return days;
     }
 
+    saveDailyHistory() {
+        localStorage.setItem('dailyHistory', JSON.stringify(this.dailyHistory));
+    }
+
     getTodayStatus() {
         return this.getDayStatus(this.today);
     }
@@ -581,9 +585,15 @@ class SmallWidgets {
         this.saveMoodStats(moodStats);
         this.updateMoodCounts(moodStats);
     }
+saveDailyHistory() {
+        localStorage.setItem('dailyHistory', JSON.stringify(this.dailyHistory));
+    }
+
+    getTodayStatus() {
+        return this.getDayStatus(this.today);
+    }
 }
 
-let smallWidgets;
 function addNameCustomization() {
     const userNameElement = document.getElementById('user-name');
     
